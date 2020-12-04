@@ -8,9 +8,9 @@ import android.graphics.Typeface;
  * Created by daniel on 12/08/2016.
  */
 public class DrawText implements IDrawItem {
-    private Paint paint = new Paint();
-    private String text;
-    private boolean newLine;
+    protected Paint paint = new Paint();
+    protected String text;
+    protected boolean newLine;
 
     public DrawText(String text) {
         this.text = text;
@@ -21,12 +21,12 @@ public class DrawText implements IDrawItem {
         canvas.drawText(text, getX(canvas, x), getY(y), paint);
     }
 
-    private float getY(float y) {
+    protected float getY(float y) {
         float baseline = -paint.ascent();
         return baseline + y;
     }
 
-    private float getX(Canvas canvas, float x) {
+    protected float getX(Canvas canvas, float x) {
         float xPos = x;
         if (paint.getTextAlign().equals(Paint.Align.CENTER)) {
             xPos = (canvas.getWidth() / 2);
@@ -36,9 +36,13 @@ public class DrawText implements IDrawItem {
         return xPos;
     }
 
+    protected int getTextHeight(){
+        return (newLine ? (int) getTextSize() : 0);
+    }
+
     @Override
     public int getHeight() {
-        return (newLine ? (int) getTextSize() : 0);
+        return getTextHeight();
     }
 
     public String getText() {
