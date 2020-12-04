@@ -7,10 +7,11 @@ import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.danielfelgar.drawreceiptlib.ReceiptBuilder;
 
