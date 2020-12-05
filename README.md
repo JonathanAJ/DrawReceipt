@@ -1,7 +1,7 @@
 # DrawReceipt
 Android lib to draw receipt as bitmap for thermal prints
 
-![Screenshot](DrawReceiptScreenshot.png)
+![Screenshot](DrawReceiptScreenshot.jpg)
 
 # Version
 
@@ -19,11 +19,14 @@ dependencies {
 
 # Usage
 
-        ReceiptBuilder receipt = new ReceiptBuilder(1200);
-        receipt.setMargin(30, 20).
+        String longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        int labelWidth = 1000;
+        Bitmap barcode = BitmapFactory.decodeResource(this.getResources(), R.drawable.barcode);
+        ReceiptBuilder receipt = new ReceiptBuilder(labelWidth);
+        receipt.setMargin(20, 20).
                 setAlign(Paint.Align.CENTER).
                 setColor(Color.BLACK).
-                setTextSize(60).
+                setTextSize(50).
                 setTypeface(this, "fonts/RobotoMono-Regular.ttf").
                 addText("LakeFront Cafe").
                 addText("1234 Main St.").
@@ -74,9 +77,14 @@ dependencies {
                 addText("$        ").
                 addLine(180).
                 addParagraph().
+                setAlign(Paint.Align.LEFT).
+                addText("Key:", false).
+                setAlign(Paint.Align.RIGHT).
+                addMultilineText("Value multilinetext abcdefg", labelWidth/2).
                 setAlign(Paint.Align.CENTER).
                 setTypeface(this, "fonts/RobotoMono-Regular.ttf").
                 addText("APPROVED").
+                addMultilineText(longText).
                 addParagraph().
                 addImage(barcode);
         ivReceipt.setImageBitmap(receipt.build());
