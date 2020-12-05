@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +149,26 @@ public class ReceiptBuilder {
         return this;
     }
 
+    public ReceiptBuilder addMultilineText(String text, int textWidth){
+
+        DrawMultilineText drawerText = new DrawMultilineText(text, textWidth - marginRight - marginLeft);
+        drawerText.setTextSize(this.textSize);
+        drawerText.setColor(this.color);
+        drawerText.setNewLine(true);
+        if (typeface != null) {
+            drawerText.setTypeface(typeface);
+        }
+        if (align != null) {
+            drawerText.setAlign(align);
+        }
+        listItens.add(drawerText);
+        return this;
+    }
+
+    public ReceiptBuilder addMultilineText(String text){
+        return addMultilineText(text, width);
+    }
+
     private int getHeight() {
         int height = 5 + marginTop + marginBottom;
         for (IDrawItem item : listItens) {
@@ -156,7 +177,8 @@ public class ReceiptBuilder {
         return height;
     }
 
-    private Bitmap drawImage() {
+    private Pair<Bitmap, Integer> drawImage() {
+
         Bitmap image = Bitmap.createBitmap(width - marginRight - marginLeft, getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
         canvas.drawColor(backgroundColor);
@@ -165,15 +187,16 @@ public class ReceiptBuilder {
             item.drawOnCanvas(canvas, 0, size);
             size += item.getHeight();
         }
-        return image;
+        return new Pair<>(image, Math.round(size));
     }
 
     public Bitmap build() {
-        Bitmap image = Bitmap.createBitmap(width, getHeight(), Bitmap.Config.ARGB_8888);
+        final Pair<Bitmap, Integer> drawPair = drawImage();
+        Bitmap image = Bitmap.createBitmap(width, drawPair.second, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
         Paint paint = new Paint();
         canvas.drawColor(backgroundColor);
-        canvas.drawBitmap(drawImage(), marginLeft, 0, paint);
+        canvas.drawBitmap(drawPair.first, marginLeft, 0, paint);
         return image;
     }
 
