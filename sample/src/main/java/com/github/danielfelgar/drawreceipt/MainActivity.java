@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,9 +12,6 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.danielfelgar.drawreceiptlib.ReceiptBuilder;
-
-import java.io.IOException;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,13 +33,14 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btDraw)
     public void drawReceipt(View view) {
+        String longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        int labelWidth = 1000;
         Bitmap barcode = BitmapFactory.decodeResource(this.getResources(), R.drawable.barcode);
-
-        ReceiptBuilder receipt = new ReceiptBuilder(1200);
-        receipt.setMargin(30, 20).
+        ReceiptBuilder receipt = new ReceiptBuilder(labelWidth);
+        receipt.setMargin(20, 20).
                 setAlign(Paint.Align.CENTER).
                 setColor(Color.BLACK).
-                setTextSize(60).
+                setTextSize(50).
                 setTypeface(this, "fonts/RobotoMono-Regular.ttf").
                 addText("LakeFront Cafe").
                 addText("1234 Main St.").
@@ -95,21 +91,17 @@ public class MainActivity extends AppCompatActivity {
                 addText("$        ").
                 addLine(180).
                 addParagraph().
+                setAlign(Paint.Align.LEFT).
+                addText("Key:", false).
+                setAlign(Paint.Align.RIGHT).
+                addMultilineText("Value multilinetext abcdefg", labelWidth/2).
                 setAlign(Paint.Align.CENTER).
                 setTypeface(this, "fonts/RobotoMono-Regular.ttf").
                 addText("APPROVED").
+                addMultilineText(longText).
                 addParagraph().
                 addImage(barcode);
         ivReceipt.setImageBitmap(receipt.build());
-
-        Geocoder coder = new Geocoder(this);
-        try {
-            List<Address> enderecos = coder.getFromLocation(-22.90827, -47.06501, 1);
-            enderecos.isEmpty();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
     }
 
