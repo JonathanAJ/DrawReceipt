@@ -3,6 +3,7 @@ package com.github.danielfelgar.drawreceiptlib;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -10,63 +11,119 @@ import java.util.List;
 
 public class DrawMultilineText extends DrawText {
 
+    public static final String END_OF_TEXT = "\u0003";
     private final int width;
+    private final boolean wrapText;
+    private final List<String> linesOfText = new ArrayList<>();
+    private int linesCount;
 
-    public DrawMultilineText(String text, int width) {
+    public DrawMultilineText(String text, int width, float textSize, int color, Typeface typeface, Paint.Align align, boolean wrapText) {
         super(text);
         this.width = width;
+        this.wrapText = wrapText;
+
+        super.setTextSize(textSize);
+        super.setColor(color);
+        super.setNewLine(true);
+
+        if (typeface != null) {
+            super.setTypeface(typeface);
+        }
+        if (align != null) {
+            super.setAlign(align);
+        }
+        splitText();
     }
 
     @Override
     public void drawOnCanvas(Canvas canvas, float x, float y) {
-        drawMultiLineText(text, x, y, paint, canvas);
+        drawMultilineText(x, y, paint, canvas);
     }
 
     @Override
     public int getHeight() {
-        return computeLineAmount() * getTextHeight();
+        return linesCount * getTextHeight();
     }
 
-    private void drawMultiLineText(String str, float x, float y, Paint paint, Canvas canvas) {
-        String[] lines = str.split("\n");
+
+    private void drawMultilineText(float x, float y, Paint paint, Canvas canvas){
         float xx = getX(canvas, x);
         float yy = getY(y);
         float height = 0;
+        for (String line: linesOfText){
+            canvas.drawText(line, xx, yy + height, paint);
+            height += getTextHeight();
+        }
+    }
 
-        for (String line : lines) {
+    private void makeSecureLinesWrapText(String text, Paint mPaint) {
 
-            final List<String> subLines = new ArrayList<>();
-            makeSecureLines(line, paint, width, subLines);
+        if (TextUtils.isEmpty(text)) {
+            linesOfText.add("");
+        }
 
-            for (String subTxt : subLines) {
-                canvas.drawText(subTxt, xx, yy + height, paint);
-                height += getTextHeight();
+        //measuredNum used as the end of line
+        int measuredNum = mPaint.breakText(text, true, width, null);
+        String subString = text.substring(0, measuredNum);
+        if (subString.contains(END_OF_TEXT)){
+            linesOfText.add(subString.replace(END_OF_TEXT, ""));
+        }
+        else {
+            int lastIndexOfSpace;
+            int endIndex = measuredNum;
+
+            //if true measured text fits in a line
+            if (text.charAt(measuredNum) == ' '){
+                measuredNum +=1; //increasing to skip space on the next line
+                linesOfText.add(text.substring(0, endIndex));
+            }
+
+            //if true endIndex is changed to last space in a substring
+            else if (( lastIndexOfSpace = subString.lastIndexOf( ' ') ) > 0) {
+                endIndex = lastIndexOfSpace;
+                measuredNum = lastIndexOfSpace+1; //increasing to skip a space on the next line
+                linesOfText.add(text.substring(0, endIndex));
+            }
+            //No spaces found we split word and add "-" at the end of the word
+            else {
+                measuredNum -= 1;
+                linesOfText.add(text.substring(0, measuredNum)+"-");
+            }
+            String leftStr = text.substring(measuredNum);
+
+            if(leftStr.length() > 0) {
+                makeSecureLinesWrapText(leftStr, mPaint);
             }
         }
     }
 
-    private int makeSecureLines(String text, Paint mPaint, float secureLineWidth, List<String> lines) {
+    private void makeSecureLines(String text, Paint mPaint) {
 
         if (TextUtils.isEmpty(text)) {
-            lines.add("");
-            return 1;
+            linesOfText.add("");
         }
-        int measuredNum = mPaint.breakText(text, true, secureLineWidth, null);
-        lines.add(text.substring(0, measuredNum));
+
+        int measuredNum = mPaint.breakText(text, true, width, null);
+
+        linesOfText.add(text.substring(0, measuredNum));
         String leftStr = text.substring(measuredNum);
 
-        if(leftStr.length() > 0) makeSecureLines(leftStr, mPaint, secureLineWidth, lines);
-        return lines.size();
+        if(leftStr.length() > 0) makeSecureLines(leftStr, mPaint);
     }
 
-    private int computeLineAmount() {
+    private void splitText(){
         String[] lines = text.split("\n");
-        int inc = 0;
-        ArrayList<String> arr = new ArrayList<>();
-        for (String line : lines) {
-            arr.clear();
-            inc += makeSecureLines(line, paint, width, arr);
+        if (wrapText){
+            for (String line: lines){
+                makeSecureLinesWrapText(line, paint);
+            }
+        }else{
+            for (String line: lines){
+                makeSecureLines(line, paint);
+            }
         }
-        return inc;
+
+        linesCount = linesOfText.size();
     }
+
 }

@@ -11,6 +11,8 @@ import android.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.danielfelgar.drawreceiptlib.DrawMultilineText.END_OF_TEXT;
+
 /**
  * Created by daniel on 12/08/2016.
  */
@@ -149,24 +151,18 @@ public class ReceiptBuilder {
         return this;
     }
 
-    public ReceiptBuilder addMultilineText(String text, int textWidth){
+    public ReceiptBuilder addMultilineText(String text, int textWidth, boolean wrapText){
 
-        DrawMultilineText drawerText = new DrawMultilineText(text, textWidth - marginRight - marginLeft);
-        drawerText.setTextSize(this.textSize);
-        drawerText.setColor(this.color);
-        drawerText.setNewLine(true);
-        if (typeface != null) {
-            drawerText.setTypeface(typeface);
-        }
-        if (align != null) {
-            drawerText.setAlign(align);
-        }
+        if (wrapText) text = text.replaceAll(END_OF_TEXT, "")+END_OF_TEXT;
+        textWidth = textWidth  - marginRight - marginLeft;
+        DrawMultilineText drawerText = new DrawMultilineText(text, textWidth, this.textSize, this.color, this.typeface, this.align, wrapText);
+
         listItens.add(drawerText);
         return this;
     }
 
-    public ReceiptBuilder addMultilineText(String text){
-        return addMultilineText(text, width);
+    public ReceiptBuilder addMultilineText(String text, boolean wrapText){
+        return addMultilineText(text, width, wrapText);
     }
 
     private int getHeight() {
