@@ -19,7 +19,7 @@ dependencies {
 
 # Usage
 
-        String longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        String longText = "Lorem ipsum dolor sit amet, abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
         int labelWidth = 1000;
         Bitmap barcode = BitmapFactory.decodeResource(this.getResources(), R.drawable.barcode);
         ReceiptBuilder receipt = new ReceiptBuilder(labelWidth);
@@ -80,11 +80,12 @@ dependencies {
                 setAlign(Paint.Align.LEFT).
                 addText("Key:", false).
                 setAlign(Paint.Align.RIGHT).
-                addMultilineText("Value multilinetext abcdefg", labelWidth/2).
+                addMultilineText("Valuemultilinetext abcdefg", labelWidth/2, true).
                 setAlign(Paint.Align.CENTER).
                 setTypeface(this, "fonts/RobotoMono-Regular.ttf").
                 addText("APPROVED").
-                addMultilineText(longText).
+                setAlign(Paint.Align.LEFT).
+                addMultilineText(longText, true).
                 addParagraph().
                 addImage(barcode);
         ivReceipt.setImageBitmap(receipt.build());
