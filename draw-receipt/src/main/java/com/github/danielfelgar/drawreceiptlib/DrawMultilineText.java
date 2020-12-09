@@ -56,14 +56,14 @@ public class DrawMultilineText extends DrawText {
         }
     }
 
-    private void makeSecureLinesWrapText(String text, Paint mPaint) {
+    private void makeSecureLinesWrapText(String text) {
 
         if (TextUtils.isEmpty(text)) {
             linesOfText.add("");
         }
 
         //measuredNum used as the end of line
-        int measuredNum = mPaint.breakText(text, true, width, null);
+        int measuredNum = paint.breakText(text, true, width, null);
         String subString = text.substring(0, measuredNum);
         if (subString.contains(END_OF_TEXT)){
             linesOfText.add(subString.replace(END_OF_TEXT, ""));
@@ -92,34 +92,34 @@ public class DrawMultilineText extends DrawText {
             String leftStr = text.substring(measuredNum);
 
             if(leftStr.length() > 0) {
-                makeSecureLinesWrapText(leftStr, mPaint);
+                makeSecureLinesWrapText(leftStr);
             }
         }
     }
 
-    private void makeSecureLines(String text, Paint mPaint) {
+    private void makeSecureLines(String text) {
 
         if (TextUtils.isEmpty(text)) {
             linesOfText.add("");
         }
 
-        int measuredNum = mPaint.breakText(text, true, width, null);
+        int measuredNum = paint.breakText(text, true, width, null);
 
         linesOfText.add(text.substring(0, measuredNum));
         String leftStr = text.substring(measuredNum);
 
-        if(leftStr.length() > 0) makeSecureLines(leftStr, mPaint);
+        if(leftStr.length() > 0) makeSecureLines(leftStr);
     }
 
     private void splitText(){
         String[] lines = text.split("\n");
         if (wrapText){
             for (String line: lines){
-                makeSecureLinesWrapText(line, paint);
+                makeSecureLinesWrapText(line);
             }
         }else{
             for (String line: lines){
-                makeSecureLines(line, paint);
+                makeSecureLines(line);
             }
         }
 
