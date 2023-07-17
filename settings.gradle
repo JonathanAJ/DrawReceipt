@@ -1,1 +1,1 @@
-include ':sample', ':draw-receipt'
+include ':draw-receipt'
