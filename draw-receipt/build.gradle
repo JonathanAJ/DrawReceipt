@@ -1,12 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
+
 group = 'com.github.JonathanAJ'
 
 android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -17,9 +19,27 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.13.2'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.JonathanAJ'
+                artifactId = 'draw-receipt'
+                version = '1.0'
+            }
+        }
+    }
 }
