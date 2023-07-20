@@ -25,9 +25,15 @@ public class ReceiptBuilder {
     private int marginTop, marginBottom, marginLeft, marginRight;
     private Typeface typeface;
     private Paint.Align align = Paint.Align.LEFT;
+    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
 
     public ReceiptBuilder(int width) {
         this.width = width;
+    }
+
+    public ReceiptBuilder setBitmapConfig(Bitmap.Config bitmapConfig) {
+        this.bitmapConfig = bitmapConfig;
+        return this;
     }
 
     public ReceiptBuilder setTextSize(float textSize) {
@@ -175,7 +181,7 @@ public class ReceiptBuilder {
 
     private Pair<Bitmap, Integer> drawImage() {
 
-        Bitmap image = Bitmap.createBitmap(width - marginRight - marginLeft, getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap image = Bitmap.createBitmap(width - marginRight - marginLeft, getHeight(), bitmapConfig);
         Canvas canvas = new Canvas(image);
         canvas.drawColor(backgroundColor);
         float size = marginTop;
@@ -188,7 +194,7 @@ public class ReceiptBuilder {
 
     public Bitmap build() {
         final Pair<Bitmap, Integer> drawPair = drawImage();
-        Bitmap image = Bitmap.createBitmap(width, drawPair.second, Bitmap.Config.ARGB_8888);
+        Bitmap image = Bitmap.createBitmap(width, drawPair.second, bitmapConfig);
         Canvas canvas = new Canvas(image);
         Paint paint = new Paint();
         canvas.drawColor(backgroundColor);
